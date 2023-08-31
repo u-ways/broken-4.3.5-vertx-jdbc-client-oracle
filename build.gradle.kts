@@ -15,8 +15,24 @@ description = "Demo of JDBCColumnDescriptor inflexible type mapping."
 repositories(RepositoryHandler::mavenCentral)
 
 dependencies {
-    implementation(rootProject.libs.kotlin.stdlib)
+    val vertxVersion = "4.4.5"
+    val kotlinAwaitilityVersion = "4.1.0"
+    val hikariCPVersion = "5.0.1"
+    val ojdbc11Version = "21.9.0.0"
 
+    implementation("io.vertx:vertx-config:$vertxVersion")
+    implementation("io.vertx:vertx-core:$vertxVersion")
+    implementation("io.vertx:vertx-lang-kotlin-coroutines:$vertxVersion")
+    implementation("io.vertx:vertx-lang-kotlin:$vertxVersion")
+    implementation("io.vertx:vertx-jdbc-client:$vertxVersion")
+    implementation("io.vertx:vertx-sql-client:$vertxVersion")
+    implementation("io.vertx:vertx-sql-client-templates:$vertxVersion")
+    implementation("com.zaxxer:HikariCP:$hikariCPVersion")
+    implementation("com.oracle.database.jdbc:ojdbc11:$ojdbc11Version")
+    testImplementation("io.vertx:vertx-junit5:$vertxVersion")
+    testImplementation("org.awaitility:awaitility-kotlin:$kotlinAwaitilityVersion")
+
+    implementation(rootProject.libs.kotlin.stdlib)
     testImplementation(rootProject.libs.mockk)
     testImplementation(rootProject.libs.junit.jupiter)
     testImplementation(rootProject.libs.kotest.assertions.core)
@@ -24,7 +40,11 @@ dependencies {
 }
 
 java {
-    toolchain { languageVersion.set(JavaLanguageVersion.of(17)) }
+    toolchain {
+        languageVersion.set(
+            JavaLanguageVersion.of(1 + VERSION_17.ordinal)
+        )
+    }
 }
 
 tasks {

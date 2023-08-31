@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+  oracle-19c-database:
+    # NOTE:
+    #  You will need to login to Oracle Container Registry to pull this image:
+    #    1. Run: `docker login container-registry.oracle.com` and use your Oracle SSO credentials.
+    #    2. Go to https://container-registry.oracle.com and accept the terms and conditions for the image.
+    #
+    #  See: https://container-registry.oracle.com/ords/f?p=113:4:16044254962456:::4:P4_REPOSITORY,AI_REPOSITORY,AI_REPOSITORY_NAME,P4_REPOSITORY_NAME,P4_EULA_ID,P4_BUSINESS_AREA_ID:9,9,Oracle%20Database%20Enterprise%20Edition,Oracle%20Database%20Enterprise%20Edition,1,0&cs=3h6hTGhGmBQROfupeKYDPC96RjgW3eR5eSMZOFauK4UrtmgG_ynIQkuPSJwooLQM-ByBVufwN4QDzVD0gyKKKhA
+    image: "container-registry.oracle.com/database/enterprise:19.3.0.0"
+    ports:
+      # Oracle Listener
+      - "1521:1521"
+      # OEM Express (access: https://<hostname>:<port>/em)
+      - "5500:5500"
+    # See: https://github.com/oracle/docker-images/blob/main/OracleDatabase/SingleInstance/README.md
+    environment:
+      - ORACLE_PDB=ORCLCDB
+      - ORACLE_SID=ORCLCDB1
+      - ORACLE_PWD=Oracl3!!
+      - ORACLE_CHARACTERSET=AL32UTF8
+      - ORACLE_EDITION=enterprise
+    volumes:
+      # NOTE:
+      # - Please clear the physical location if you're switching to standard edition.
+      # - This volume has to be writable by the "oracle" (uid: 54321) user inside the container.
+      #   i.e. `sudo chown -R 54321:54321 oracle-data` if you have permission issues.
+      - ./oracle-data:/opt/oracle/oradata
+    shm_size: '2gb'
+    healthcheck:
+      test: [ "CMD-SHELL", "echo 'SELECT 1 FROM DUAL;' | sqlplus -S system/Oracl3!!@localhost:1521/ORCLCDB1 | grep -q 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      # Takes up to 10 minutes to start up on a dry run.
+      start_period: 600s

@@ -31,3 +31,6 @@ build/
 # indicate out of memory issues about the related processes. These hprof files can be configured
 # at startup to track and monitor memory performance issues
 *.hprof
+
+# Oracle Volumes
+oracle-data/
