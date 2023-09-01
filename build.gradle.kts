@@ -10,12 +10,13 @@ plugins {
 
 group = "io.github.u.ways"
 version = System.getenv("VERSION") ?: "DEV-SNAPSHOT"
-description = "Demo of JDBCColumnDescriptor inflexible type mapping."
+description = "Demo of broken type handling with Oracle Database in Vertx 4.3.5+"
 
 repositories(RepositoryHandler::mavenCentral)
 
 dependencies {
-    val vertxVersion = "4.4.5"
+    // Use "4.3.4" for a quick fix.
+    val vertxVersion = "4.3.5"
     val kotlinAwaitilityVersion = "4.1.0"
     val hikariCPVersion = "5.0.1"
     val ojdbc11Version = "21.9.0.0"

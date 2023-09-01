@@ -30,7 +30,7 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(VertxExtension::class)
-class JDBCColumnDescriptorTest {
+class DataTypesHandlingScenariosTest {
     companion object {
         private const val APP_NAME = "test"
         private const val TEST_TABLE = "test_table"
@@ -148,31 +148,6 @@ class JDBCColumnDescriptorTest {
     inner class VARCHAR2 {
 
         @Test
-        fun `UUID Byte -- VARCHAR2 - retrieve stored byte as String`() =
-            runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
-                val uuid = UUID.randomUUID()
-
-                val firstConnection = SharedDbClient.pool.connection.await()
-                val insertTemplate = "INSERT INTO $TEST_TABLE ($TEST_STRING_COLUMN_KEY) VALUES (#{$STRING_KEY})"
-
-                SqlTemplate
-                    .forUpdate(firstConnection, insertTemplate)
-                    .execute(mapOf(STRING_KEY to uuid.toByteArray()))
-                    .await()
-                    .rowCount() shouldBe 1
-
-                val secondConnection = SharedDbClient.pool.connection.await()
-                val selectTemplate = "SELECT $TEST_STRING_COLUMN_KEY FROM $TEST_TABLE WHERE $TEST_STRING_COLUMN_KEY = #{$STRING_KEY}"
-
-                SqlTemplate
-                    .forQuery(secondConnection, selectTemplate)
-                    .mapTo(String::class.java)
-                    .execute(mapOf(STRING_KEY to uuid.toByteArray()))
-                    .await()
-                    .firstOrNull() shouldBe uuid
-            }
-
-        @Test
         fun `String Random -- VARCHAR2`() =
             runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
                 val connection = SharedDbClient.pool.connection.await()
@@ -198,6 +173,7 @@ class JDBCColumnDescriptorTest {
                     .rowCount() shouldBe 1
             }
 
+        // FIXME: FAILS WITH 4.4.5
         @Test
         fun `UUID String -- VARCHAR2`() =
             runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
@@ -211,6 +187,7 @@ class JDBCColumnDescriptorTest {
                     .rowCount() shouldBe 1
             }
 
+        // FIXME: FAILS WITH 4.4.5
         @Test
         fun `UUID String -- VARCHAR2 -- CAST AS VARCHAR2(100)`() =
             runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
@@ -224,6 +201,7 @@ class JDBCColumnDescriptorTest {
                     .rowCount() shouldBe 1
             }
 
+        // FIXME: FAILS WITH 4.4.5
         @Test
         fun `UUID String -- VARCHAR2 -- preparedQuery`() {
             runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
@@ -235,6 +213,7 @@ class JDBCColumnDescriptorTest {
             }
         }
 
+        // FIXME: FAILS WITH 4.4.5
         @Test
         fun `UUID String -- VARCHAR2 -- preparedQuery -- CAST AS VARCHAR2(100)`() {
             runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
@@ -255,19 +234,6 @@ class JDBCColumnDescriptorTest {
                     .await()
                     .rowCount() shouldBe 1
             }
-
-        @Test
-        fun `UUID -- VARCHAR2`() =
-            runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
-                val connection = SharedDbClient.pool.connection.await()
-                val template = "INSERT INTO $TEST_TABLE ($TEST_STRING_COLUMN_KEY) VALUES (#{$STRING_KEY})"
-
-                SqlTemplate
-                    .forUpdate(connection, template)
-                    .execute(mapOf(STRING_KEY to UUID.randomUUID()))
-                    .await()
-                    .rowCount() shouldBe 1
-            }
     }
 
     @Nested
@@ -281,32 +247,6 @@ class JDBCColumnDescriptorTest {
                 SqlTemplate
                     .forUpdate(connection, template)
                     .execute(mapOf(UUID_KEY to randomString(8).toByteArray()))
-                    .await()
-                    .rowCount() shouldBe 1
-            }
-
-        @Test
-        fun `UUID -- RAW`() =
-            runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
-                val connection = SharedDbClient.pool.connection.await()
-                val template = "INSERT INTO $TEST_TABLE ($TEST_UUID_COLUMN_KEY) VALUES (#{$UUID_KEY})"
-
-                SqlTemplate
-                    .forUpdate(connection, template)
-                    .execute(mapOf(UUID_KEY to UUID.randomUUID().toString()))
-                    .await()
-                    .rowCount() shouldBe 1
-            }
-
-        @Test
-        fun `UUID String -- RAW`() =
-            runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
-                val connection = SharedDbClient.pool.connection.await()
-                val template = "INSERT INTO $TEST_TABLE ($TEST_UUID_COLUMN_KEY) VALUES (#{$UUID_KEY})"
-
-                SqlTemplate
-                    .forUpdate(connection, template)
-                    .execute(mapOf(UUID_KEY to UUID.randomUUID().toString()))
                     .await()
                     .rowCount() shouldBe 1
             }
@@ -343,6 +283,7 @@ class JDBCColumnDescriptorTest {
                     .rowCount() shouldBe 1
             }
 
+        // FIXME: FAILS WITH 4.4.5
         @Test
         fun `Instant -- TIMESTAMP`() =
             runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
