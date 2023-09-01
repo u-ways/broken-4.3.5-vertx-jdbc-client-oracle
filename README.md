@@ -1,6 +1,6 @@
 # Background
 
-It seems that 4.3.5 has introduced broken logic when it comes to certain type handling (e.g. UUID, TIMESTAMP) with Oracle 
+It seems that 4.4.5 has introduced broken logic when it comes to certain type handling (e.g. UUID, TIMESTAMP) with Oracle 
 Database with the JDBC client.
 
 ## Analysis for UUIDs
