@@ -19,6 +19,7 @@ dependencies {
     val kotlinAwaitilityVersion = "4.1.0"
     val hikariCPVersion = "5.0.1"
     val ojdbc11Version = "21.9.0.0"
+    val jacksonVersion = "2.15.2"
 
     implementation("io.vertx:vertx-config:$vertxVersion")
     implementation("io.vertx:vertx-core:$vertxVersion")
@@ -29,6 +30,8 @@ dependencies {
     implementation("io.vertx:vertx-sql-client-templates:$vertxVersion")
     implementation("com.zaxxer:HikariCP:$hikariCPVersion")
     implementation("com.oracle.database.jdbc:ojdbc11:$ojdbc11Version")
+    implementation("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
+
     testImplementation("io.vertx:vertx-junit5:$vertxVersion")
     testImplementation("org.awaitility:awaitility-kotlin:$kotlinAwaitilityVersion")
 

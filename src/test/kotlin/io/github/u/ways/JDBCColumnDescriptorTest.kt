@@ -96,6 +96,32 @@ class JDBCColumnDescriptorTest {
 
     @Nested
     inner class VARCHAR2 {
+
+        @Test
+        fun `UUID Byte -- VARCHAR2 - retrieve stored byte as String`() =
+            runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
+                val uuid = UUID.randomUUID()
+
+                val firstConnection = SharedDbClient.pool.connection.await()
+                val insertTemplate = "INSERT INTO $TEST_TABLE ($TEST_STRING_COLUMN_KEY) VALUES (#{$STRING_KEY})"
+
+                SqlTemplate
+                    .forUpdate(firstConnection, insertTemplate)
+                    .execute(mapOf(STRING_KEY to uuid.toByteArray()))
+                    .await()
+                    .rowCount() shouldBe 1
+
+                val secondConnection = SharedDbClient.pool.connection.await()
+                val selectTemplate = "SELECT $TEST_STRING_COLUMN_KEY FROM $TEST_TABLE WHERE $TEST_STRING_COLUMN_KEY = #{$STRING_KEY}"
+
+                SqlTemplate
+                    .forQuery(secondConnection, selectTemplate)
+                    .mapTo(String::class.java)
+                    .execute(mapOf(STRING_KEY to uuid.toByteArray()))
+                    .await()
+                    .firstOrNull() shouldBe uuid
+            }
+
         @Test
         fun `String Random -- VARCHAR2`() =
             runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
@@ -136,8 +162,6 @@ class JDBCColumnDescriptorTest {
         @Test
         fun `UUID Byte -- VARCHAR2 -- preparedQuery`() =
             runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
-                val uuid = UUID.randomUUID().toString()
-
                 SharedDbClient.pool
                     .preparedQuery("INSERT INTO $TEST_TABLE ($TEST_STRING_COLUMN_KEY) VALUES (?)")
                     .execute(Tuple.of(UUID.randomUUID().toByteArray()))
