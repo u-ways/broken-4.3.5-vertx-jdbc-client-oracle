@@ -34,7 +34,7 @@ statement. This UUID instance then causes the exception when it is set as an obj
 # Running the project:
 
 The project contains testing code that will demonstrate the issue. Those tests can be found here: 
-- [io.github.u.ways.DataTypesHandlingScenariosTest](./src/test/kotlin/io/github/u/ways/DataTypesHandlingScenariosTest.java)
+- [io.github.u.ways.DataTypesHandlingScenariosTest](https://github.com/u-ways/broken-4.4.5-vertx-jdbc-client-oracle/blob/main/src/test/kotlin/io/github/u/ways/DataTypesHandlingScenariosTest.kt)
 
 Tests that fail with 4.4.5, will have the comment: `// FIXME: FAILS WITH 4.4.5`
 
