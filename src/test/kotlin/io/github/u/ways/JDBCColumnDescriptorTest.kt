@@ -136,6 +136,19 @@ class JDBCColumnDescriptorTest {
             }
 
         @Test
+        fun `String Random -- VARCHAR2 -- CAST AS VARCHAR2(100)`() =
+            runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
+                val connection = SharedDbClient.pool.connection.await()
+                val template = "INSERT INTO $TEST_TABLE ($TEST_STRING_COLUMN_KEY) VALUES (CAST(#{$STRING_KEY} AS VARCHAR2(36)))"
+
+                SqlTemplate
+                    .forUpdate(connection, template)
+                    .execute(mapOf(STRING_KEY to randomString(16)))
+                    .await()
+                    .rowCount() shouldBe 1
+            }
+
+        @Test
         fun `UUID String -- VARCHAR2`() =
             runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
                 val connection = SharedDbClient.pool.connection.await()
@@ -149,10 +162,34 @@ class JDBCColumnDescriptorTest {
             }
 
         @Test
+        fun `UUID String -- VARCHAR2 -- CAST AS VARCHAR2(100)`() =
+            runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
+                val connection = SharedDbClient.pool.connection.await()
+                val template = "INSERT INTO $TEST_TABLE ($TEST_STRING_COLUMN_KEY) VALUES (CAST(#{$STRING_KEY} AS VARCHAR2(100)))"
+
+                SqlTemplate
+                    .forUpdate(connection, template)
+                    .execute(mapOf(STRING_KEY to UUID.randomUUID().toString()))
+                    .await()
+                    .rowCount() shouldBe 1
+            }
+
+        @Test
         fun `UUID String -- VARCHAR2 -- preparedQuery`() {
             runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
                 SharedDbClient.pool
                     .preparedQuery("INSERT INTO $TEST_TABLE ($TEST_STRING_COLUMN_KEY) VALUES (?)")
+                    .execute(Tuple.of(UUID.randomUUID().toString()))
+                    .await()
+                    .rowCount() shouldBe 1
+            }
+        }
+
+        @Test
+        fun `UUID String -- VARCHAR2 -- preparedQuery -- CAST AS VARCHAR2(100)`() {
+            runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
+                SharedDbClient.pool
+                    .preparedQuery("INSERT INTO $TEST_TABLE ($TEST_STRING_COLUMN_KEY) VALUES (CAST(? AS VARCHAR2(100)))")
                     .execute(Tuple.of(UUID.randomUUID().toString()))
                     .await()
                     .rowCount() shouldBe 1
