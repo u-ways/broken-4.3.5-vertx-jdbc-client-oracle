@@ -173,7 +173,7 @@ class DataTypesHandlingScenariosTest {
                     .rowCount() shouldBe 1
             }
 
-        // FIXME: FAILS WITH 4.4.5
+        // FIXME: FAILS WITH 4.3.5
         @Test
         fun `UUID String -- VARCHAR2`() =
             runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
@@ -187,7 +187,7 @@ class DataTypesHandlingScenariosTest {
                     .rowCount() shouldBe 1
             }
 
-        // FIXME: FAILS WITH 4.4.5
+        // FIXME: FAILS WITH 4.3.5
         @Test
         fun `UUID String -- VARCHAR2 -- CAST AS VARCHAR2(100)`() =
             runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
@@ -201,7 +201,7 @@ class DataTypesHandlingScenariosTest {
                     .rowCount() shouldBe 1
             }
 
-        // FIXME: FAILS WITH 4.4.5
+        // FIXME: FAILS WITH 4.3.5
         @Test
         fun `UUID String -- VARCHAR2 -- preparedQuery`() {
             runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
@@ -213,7 +213,7 @@ class DataTypesHandlingScenariosTest {
             }
         }
 
-        // FIXME: FAILS WITH 4.4.5
+        // FIXME: FAILS WITH 4.3.5
         @Test
         fun `UUID String -- VARCHAR2 -- preparedQuery -- CAST AS VARCHAR2(100)`() {
             runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
@@ -283,7 +283,7 @@ class DataTypesHandlingScenariosTest {
                     .rowCount() shouldBe 1
             }
 
-        // FIXME: FAILS WITH 4.4.5
+        // FIXME: FAILS WITH 4.3.5
         @Test
         fun `Instant -- TIMESTAMP`() =
             runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
