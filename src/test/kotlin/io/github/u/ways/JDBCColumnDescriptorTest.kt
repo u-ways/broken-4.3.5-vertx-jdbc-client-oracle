@@ -39,9 +39,9 @@ class JDBCColumnDescriptorTest {
         private const val TEST_UUID_COLUMN_KEY = "test_uuid_column"
         private const val TEST_TIMESTAMP_COLUMN_KEY = "test_timestamp_column"
 
-        private val STRING_KEY = "testString"
-        private val UUID_KEY = "testUuid"
-        private val TIMESTAMP_KEY = "testTimestamp"
+        private const val STRING_KEY = "testString"
+        private const val UUID_KEY = "testUuid"
+        private const val TIMESTAMP_KEY = "testTimestamp"
     }
 
     @BeforeEach
