@@ -8,6 +8,7 @@ import io.github.u.ways.config.DATABASE_URL_ENV_KEY
 import io.github.u.ways.config.DATABASE_USERNAME_ENV_KEY
 import io.github.u.ways.util.runBlockingWithTimeoutUnit
 import io.github.u.ways.util.testDatabaseClientConfiguration
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
@@ -93,6 +94,55 @@ class JDBCColumnDescriptorTest {
     fun tearDown() = runBlockingWithTimeoutUnit {
         SharedDbClient.close()
     }
+
+    /**
+     * The only solution so far:
+     * - Given our "UUID Byte -- VARCHAR2" test passed, we know that we can insert UUID byte array to VARCHAR2 column.
+     * - So we can use RAWTOHEX to convert UUID byte array to VARCHAR2,
+     * - Then we can use SUBSTR to split the VARCHAR2 into 5 parts,
+     * - Afterwards we can use || to concatenate the 5 parts into a UUID string
+     * - and then insert them into a VARCHAR2 column.
+     *
+     * Thus bypassing the ColumnDescriptor interrogation, but still inserting a UUID as a VARCHAR2 column.
+     *
+     * REF:
+     * - https://docs.oracle.com/en/database/oracle/oracle-database/19/sqlrf/RAWTOHEX.html#GUID-F86E3B5B-7FEE-47FD-A0C2-2FC55DC21C9E
+     * - https://docs.oracle.com/en/database/oracle/oracle-database/19/sqlrf/SUBSTR.html#GUID-C8A20B57-C647-4649-A379-8651AA97187E
+     */
+    @Test
+    fun `Solution - Converting the UUID as Byte, convert to RAWTOHEX and then format to UUID toString's BNF`() =
+        runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
+            val uuid = UUID.randomUUID()
+
+            val connection = SharedDbClient.pool.connection.await()
+            val template = """
+                                INSERT INTO $TEST_TABLE ($TEST_STRING_COLUMN_KEY) 
+                                VALUES (
+                                    SUBSTR(RAWTOHEX(#{$STRING_KEY}), 1, 8)  || '-' ||
+                                    SUBSTR(RAWTOHEX(#{$STRING_KEY}), 9, 4)  || '-' ||
+                                    SUBSTR(RAWTOHEX(#{$STRING_KEY}), 13, 4) || '-' ||
+                                    SUBSTR(RAWTOHEX(#{$STRING_KEY}), 17, 4) || '-' ||
+                                    SUBSTR(RAWTOHEX(#{$STRING_KEY}), 21)
+                                )
+                                """
+
+            SqlTemplate
+                .forUpdate(connection, template)
+                .execute(mapOf(STRING_KEY to uuid.toByteArray()))
+                .await()
+                .rowCount() shouldBe 1
+
+            val secondConnection = SharedDbClient.pool.connection.await()
+            val selectTemplate = "SELECT $TEST_STRING_COLUMN_KEY FROM $TEST_TABLE"
+
+            secondConnection.query(selectTemplate)
+                .execute()
+                .await()
+                .firstOrNull()
+                ?.getString(0)
+                .shouldNotBeNull()
+                .apply { UUID.fromString(this) shouldBe uuid }
+        }
 
     @Nested
     inner class VARCHAR2 {
