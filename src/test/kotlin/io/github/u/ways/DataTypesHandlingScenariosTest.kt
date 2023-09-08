@@ -11,6 +11,8 @@ import io.github.u.ways.util.testDatabaseClientConfiguration
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.vertx.core.Vertx
+import io.vertx.core.buffer.Buffer
+import io.vertx.core.buffer.Buffer.buffer
 import io.vertx.core.json.JsonObject
 import io.vertx.junit5.VertxExtension
 import io.vertx.kotlin.coroutines.await
@@ -96,7 +98,24 @@ class DataTypesHandlingScenariosTest {
     }
 
     /**
-     * The only solution so far:
+     * The cleanest solution so far wrap the UUID in a Vertx Buffer.
+     */
+    @Test
+    fun `Solution - Wrapping the UUID in a Vertx Buffer`() =
+        runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
+            val connection = SharedDbClient.pool.connection.await()
+            val template = "INSERT INTO $TEST_TABLE ($TEST_STRING_COLUMN_KEY) VALUES (CAST(#{$STRING_KEY} AS VARCHAR2(100)))"
+
+            SqlTemplate
+                .forUpdate(connection, template)
+                .execute(mapOf(STRING_KEY to UUID.randomUUID().adaptToVertxBuffer()))
+                .await()
+                .rowCount() shouldBe 1
+        }
+
+
+    /**
+     * Another (ugly) solution::
      * - Given our "UUID Byte -- VARCHAR2" test passed, we know that we can insert UUID byte array to VARCHAR2 column.
      * - So we can use RAWTOHEX to convert UUID byte array to VARCHAR2,
      * - Then we can use SUBSTR to split the VARCHAR2 into 5 parts,
@@ -324,4 +343,7 @@ class DataTypesHandlingScenariosTest {
             putLong(mostSignificantBits)
             putLong(leastSignificantBits)
         }.array()
+
+    private fun UUID.adaptToVertxBuffer(): Buffer =
+        buffer(this.toString())
 }
