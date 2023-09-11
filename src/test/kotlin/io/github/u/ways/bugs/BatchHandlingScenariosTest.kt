@@ -51,7 +51,7 @@ class BatchHandlingScenariosTest: WithDummyTable() {
      * The workaround is to apply multiple inserts in a single transaction...
      */
     @Test
-    fun `Solution - Wrapping the UUID in a Vertx Buffer`() =
+    fun `Solution - apply multiple inserts in a single transaction`() =
         runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
             val connection = SharedDbClient.pool.connection.await()
             val sql = "INSERT INTO $TEST_TABLE ($TEST_STRING_COLUMN_KEY) VALUES (?)"
