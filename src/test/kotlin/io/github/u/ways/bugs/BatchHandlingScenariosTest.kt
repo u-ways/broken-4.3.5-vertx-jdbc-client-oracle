@@ -8,8 +8,6 @@ import io.github.u.ways.util.randomString
 import io.github.u.ways.util.runBlockingWithTimeoutUnit
 import io.kotest.matchers.shouldBe
 import io.vertx.kotlin.coroutines.await
-import java.time.Duration.ofSeconds
-import kotlin.coroutines.EmptyCoroutineContext
 import org.junit.jupiter.api.Test
 
 class BatchHandlingScenariosTest: WithDummyTable() {

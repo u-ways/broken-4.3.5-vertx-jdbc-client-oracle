@@ -11,11 +11,9 @@ import io.kotest.matchers.shouldBe
 import io.vertx.kotlin.coroutines.await
 import io.vertx.sqlclient.Tuple
 import io.vertx.sqlclient.templates.SqlTemplate
-import java.time.Duration.ofSeconds
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.UUID
-import kotlin.coroutines.EmptyCoroutineContext
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
