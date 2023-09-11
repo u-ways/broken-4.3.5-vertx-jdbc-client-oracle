@@ -31,7 +31,7 @@ class DataTypesHandlingScenariosTest : WithDummyTable() {
      */
     @Test
     fun `Solution - Wrapping the UUID in a Vertx Buffer`() =
-        runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
+        runBlockingWithTimeoutUnit {
             val connection = SharedDbClient.pool.connection.await()
             val template = "INSERT INTO $TEST_TABLE ($TEST_STRING_COLUMN_KEY) VALUES (CAST(#{$STRING_KEY} AS VARCHAR2(100)))"
 
@@ -59,7 +59,7 @@ class DataTypesHandlingScenariosTest : WithDummyTable() {
      */
     @Test
     fun `Solution - Converting the UUID as Byte, convert to RAWTOHEX and then format to UUID toString's BNF`() =
-        runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
+        runBlockingWithTimeoutUnit {
             val uuid = UUID.randomUUID()
 
             val connection = SharedDbClient.pool.connection.await()
@@ -97,7 +97,7 @@ class DataTypesHandlingScenariosTest : WithDummyTable() {
 
         @Test
         fun `String Random -- VARCHAR2`() =
-            runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
+            runBlockingWithTimeoutUnit {
                 val connection = SharedDbClient.pool.connection.await()
                 val template = "INSERT INTO $TEST_TABLE ($TEST_STRING_COLUMN_KEY) VALUES (#{$STRING_KEY})"
 
@@ -110,7 +110,7 @@ class DataTypesHandlingScenariosTest : WithDummyTable() {
 
         @Test
         fun `String Random -- VARCHAR2 -- CAST AS VARCHAR2(100)`() =
-            runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
+            runBlockingWithTimeoutUnit {
                 val connection = SharedDbClient.pool.connection.await()
                 val template = "INSERT INTO $TEST_TABLE ($TEST_STRING_COLUMN_KEY) VALUES (CAST(#{$STRING_KEY} AS VARCHAR2(36)))"
 
@@ -145,7 +145,7 @@ class DataTypesHandlingScenariosTest : WithDummyTable() {
          */
         @Test
         fun `UUID String -- VARCHAR2`() =
-            runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
+            runBlockingWithTimeoutUnit {
                 val connection = SharedDbClient.pool.connection.await()
                 val template = "INSERT INTO $TEST_TABLE ($TEST_STRING_COLUMN_KEY) VALUES (#{$STRING_KEY})"
 
@@ -180,7 +180,7 @@ class DataTypesHandlingScenariosTest : WithDummyTable() {
          */
         @Test
         fun `UUID String -- VARCHAR2 -- CAST AS VARCHAR2(100)`() =
-            runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
+            runBlockingWithTimeoutUnit {
                 val connection = SharedDbClient.pool.connection.await()
                 val template = "INSERT INTO $TEST_TABLE ($TEST_STRING_COLUMN_KEY) VALUES (CAST(#{$STRING_KEY} AS VARCHAR2(100)))"
 
@@ -215,7 +215,7 @@ class DataTypesHandlingScenariosTest : WithDummyTable() {
          */
         @Test
         fun `UUID String -- VARCHAR2 -- preparedQuery`() {
-            runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
+            runBlockingWithTimeoutUnit {
                 SharedDbClient.pool
                     .preparedQuery("INSERT INTO $TEST_TABLE ($TEST_STRING_COLUMN_KEY) VALUES (?)")
                     .execute(Tuple.of(UUID.randomUUID().toString()))
@@ -248,7 +248,7 @@ class DataTypesHandlingScenariosTest : WithDummyTable() {
          */
         @Test
         fun `UUID String -- VARCHAR2 -- preparedQuery -- CAST AS VARCHAR2(100)`() {
-            runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
+            runBlockingWithTimeoutUnit {
                 SharedDbClient.pool
                     .preparedQuery("INSERT INTO $TEST_TABLE ($TEST_STRING_COLUMN_KEY) VALUES (CAST(? AS VARCHAR2(100)))")
                     .execute(Tuple.of(UUID.randomUUID().toString()))
@@ -259,7 +259,7 @@ class DataTypesHandlingScenariosTest : WithDummyTable() {
 
         @Test
         fun `UUID Byte -- VARCHAR2 -- preparedQuery`() =
-            runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
+            runBlockingWithTimeoutUnit {
                 SharedDbClient.pool
                     .preparedQuery("INSERT INTO $TEST_TABLE ($TEST_STRING_COLUMN_KEY) VALUES (?)")
                     .execute(Tuple.of(UUID.randomUUID().toByteArray()))
@@ -272,7 +272,7 @@ class DataTypesHandlingScenariosTest : WithDummyTable() {
     inner class Raw {
         @Test
         fun `String Random -- RAW`() =
-            runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
+            runBlockingWithTimeoutUnit {
                 val connection = SharedDbClient.pool.connection.await()
                 val template = "INSERT INTO $TEST_TABLE ($TEST_UUID_COLUMN_KEY) VALUES (#{$UUID_KEY})"
 
@@ -285,7 +285,7 @@ class DataTypesHandlingScenariosTest : WithDummyTable() {
 
         @Test
         fun `UUID Byte -- RAW`() =
-            runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
+            runBlockingWithTimeoutUnit {
                 val connection = SharedDbClient.pool.connection.await()
                 val template = "INSERT INTO $TEST_TABLE ($TEST_UUID_COLUMN_KEY) VALUES (#{$UUID_KEY})"
 
@@ -301,7 +301,7 @@ class DataTypesHandlingScenariosTest : WithDummyTable() {
     inner class Timestamp {
         @Test
         fun `Timestamp -- TIMESTAMP`() =
-            runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
+            runBlockingWithTimeoutUnit {
                 val connection = SharedDbClient.pool.connection.await()
                 val templateInsert = "INSERT INTO $TEST_TABLE ($TEST_TIMESTAMP_COLUMN_KEY) VALUES (#{$TIMESTAMP_KEY})"
 
@@ -339,7 +339,7 @@ class DataTypesHandlingScenariosTest : WithDummyTable() {
          */
         @Test
         fun `Instant -- TIMESTAMP`() =
-            runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
+            runBlockingWithTimeoutUnit {
                 val connection = SharedDbClient.pool.connection.await()
                 val templateInsert = "INSERT INTO $TEST_TABLE ($TEST_TIMESTAMP_COLUMN_KEY) VALUES (#{$TIMESTAMP_KEY})"
 
@@ -352,7 +352,7 @@ class DataTypesHandlingScenariosTest : WithDummyTable() {
 
         @Test
         fun `LocalDateTime -- TIMESTAMP`() =
-            runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
+            runBlockingWithTimeoutUnit {
                 val connection = SharedDbClient.pool.connection.await()
                 val templateInsert = "INSERT INTO $TEST_TABLE ($TEST_TIMESTAMP_COLUMN_KEY) VALUES (#{$TIMESTAMP_KEY})"
 

@@ -38,7 +38,7 @@ class BatchHandlingScenariosTest: WithDummyTable() {
      */
     @Test
     fun `Broken - Batching multiple rows`() =
-        runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
+        runBlockingWithTimeoutUnit {
             val connection = SharedDbClient.pool.connection.await()
             val sql = "INSERT INTO $TEST_TABLE ($TEST_STRING_COLUMN_KEY) VALUES (?)"
 
@@ -52,7 +52,7 @@ class BatchHandlingScenariosTest: WithDummyTable() {
      */
     @Test
     fun `Solution - apply multiple inserts in a single transaction`() =
-        runBlockingWithTimeoutUnit(ofSeconds(60), EmptyCoroutineContext) {
+        runBlockingWithTimeoutUnit {
             val connection = SharedDbClient.pool.connection.await()
             val sql = "INSERT INTO $TEST_TABLE ($TEST_STRING_COLUMN_KEY) VALUES (?)"
 
