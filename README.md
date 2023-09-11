@@ -1,7 +1,38 @@
+# Table of Contents
+
+- [Background](#background)
+- [#310 (Broken Batch logic with Oracle)](#310-broken-batch-logic-with-oracle)
+- [#309 (Broken type handling logic with Oracle)](#309-broken-type-handling-logic-with-oracle)
+- [Running the project:](#running-the-project)
+  - [Prerequisites](#prerequisites)
+  - [Oracle Database](#oracle-database)
+
 # Background
+
+This project is used to demonstrate the following bugs:
+- [Vert.x - #310 - Broken Batch logic with Oracle](https://github.com/vert-x3/vertx-jdbc-client/issues/310)
+- [Vert.x - #309 - Broken type handling logic with Oracle](https://github.com/vert-x3/vertx-jdbc-client/issues/309)
+
+---
+
+# #310 (Broken Batch logic with Oracle)
+
+It seems that the client assumes all vendors support [DLM returning clause](https://docs.oracle.com/database/121/LNPLS/returninginto_clause.htm#LNPLS01354) on batching. However, this is [not the cause with Oracle](https://stackoverflow.com/a/50130653).
+
+After trying to find a simple way to disable the DLM returning with no success, we settled with a transacted insert loop. You can see a similar issue for another framework here: [Micronaut #991 - Oracle - Batch w/ DML Returning](https://github.com/micronaut-projects/micronaut-data/issues/911)
+
+You can see the code that is used to demonstrate the issue here:
+- [io.github.u.ways.bugs.BatchHandlingScenariosTest](https://github.com/u-ways/broken-4.3.5-vertx-jdbc-client-oracle/blob/main/src/test/kotlin/io/github/u/ways/bugs/BatchHandlingScenariosTest.kt)
+
+---
+
+# #309 (Broken type handling logic with Oracle)
 
 It seems that 4.3.5 has introduced broken logic when it comes to certain type handling (e.g. UUID, TIMESTAMP) with Oracle 
 Database with the JDBC client.
+
+You can see the code that is used to demonstrate the issue here:
+- [io.github.u.ways.DataTypesHandlingScenariosTest](https://github.com/u-ways/broken-4.3.5-vertx-jdbc-client-oracle/blob/main/src/test/kotlin/io/github/u/ways/bugs/DataTypesHandlingScenariosTest.kt)
 
 ## Analysis for UUIDs
 
@@ -25,9 +56,7 @@ Part of the check involves calling the `JDBCTypeWrapper.isAbleASUUID()` method. 
 call returns true and causes a UUID object to be instantiated from the string and used as a parameter in the prepared 
 statement. This UUID instance then causes the exception when it is set as an object on the underlying prepared statement.
 
-### Potential Fix
-
-- Remove `JdbcType.OTHER` check as a valid option in the `JDBCTypeWrapper.isAbleASUUID()` method.
+**Potential Fix**: Remove `JdbcType.OTHER` check as a valid option in the `JDBCTypeWrapper.isAbleASUUID()` method.
 
 ---
 
