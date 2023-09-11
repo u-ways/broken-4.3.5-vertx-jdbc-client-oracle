@@ -32,15 +32,7 @@ object Query {
     suspend fun SqlConnection.multiInsertQuery(
         query: String,
         arguments: List<Array<Any>> = emptyList(),
-    ): Int = let { connection ->
-        val transaction = connection.begin().await()
-
-        connection
-            .runCatching { arguments.sumOf { connection.updateQuery(query, *it) } }
-            .onFailure { transaction.rollback() }
-            .onSuccess { transaction.commit() }
-            .getOrThrow()
-    }
+    ): Int = arguments.sumOf { updateQuery(query, *it) }
 
     /**
      * Executes an UPDATE query on the database.

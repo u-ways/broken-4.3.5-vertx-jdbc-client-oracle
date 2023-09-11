@@ -46,10 +46,10 @@ class BatchHandlingScenariosTest: WithDummyTable() {
         }
 
     /**
-     * The workaround is to apply multiple inserts in a single transaction...
+     * The workaround/fallback is to apply multiple inserts...
      */
     @Test
-    fun `Solution - apply multiple inserts in a single transaction`() =
+    fun `Solution - just apply multiple inserts`() =
         runBlockingWithTimeoutUnit {
             val connection = SharedDbClient.pool.connection.await()
             val sql = "INSERT INTO $TEST_TABLE ($TEST_STRING_COLUMN_KEY) VALUES (?)"
